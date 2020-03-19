@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.amazonaws.appsync'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.stevenmhernandez.csi_labelling_app"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        encoding "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.2'
+//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+    // @See: https://stackoverflow.com/questions/43215942/incorrect-connection-header-with-mqtt-over-websocket-with-aws-iot
+    implementation (group: 'org.eclipse.paho', name: 'org.eclipse.paho.client.mqttv3', version: '1.1.0'){force = true}
+
+    //Base SDK
+    implementation 'com.amazonaws:aws-android-sdk-core:2.13.+'
+    //AppSync SDK
+    implementation 'com.amazonaws:aws-android-sdk-appsync:2.8.+'
+    implementation 'org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.2.0'
+    implementation 'org.eclipse.paho:org.eclipse.paho.android.service:1.1.1'
+    implementation ('com.amazonaws:aws-android-sdk-iot:2.13.+@aar') { transitive = true }
+    implementation ('com.amazonaws:aws-android-sdk-mobile-client:2.13.+@aar') { transitive = true }
+    //For AWSMobileClient only:
+    implementation 'com.amazonaws:aws-android-sdk-mobile-client:2.13.+'
+    implementation project(path: ':ESP32CSISerial')
+}
