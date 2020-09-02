@@ -74,7 +74,7 @@ public class ToggleMainActivity extends AppCompatActivity implements CSIDataInte
         });
 
 
-        csiSerial.setup(this, "radial_8_positions");
+        csiSerial.setup(this, "example_experiment_name");
         csiSerial.onCreate(this);
     }
 
@@ -95,10 +95,19 @@ public class ToggleMainActivity extends AppCompatActivity implements CSIDataInte
         return String.format("CURRENT_ACTION,%s,%d,%s\n", deviceId, System.currentTimeMillis(), currentAction);
     }
 
-    int csiCounter = 0;
+    long csiCounter = 0;
+    long csiPerSecondCounter = 0;
+    long counterStart = System.currentTimeMillis();
+    long csiPerSecondCounterFinal = 0;
     @Override
     public void addCsi(String csi_string) {
+        if (counterStart + 1000 < System.currentTimeMillis()) {
+            counterStart = System.currentTimeMillis();
+            csiPerSecondCounterFinal = csiPerSecondCounter;
+            csiPerSecondCounter = 0;
+        }
         csiCounter++;
-        frameRateTextView.setText(String.valueOf(csiCounter));
+        csiPerSecondCounter++;
+        frameRateTextView.setText(String.valueOf(csiCounter) + " | " + String.valueOf(csiPerSecondCounterFinal));
     }
 }
