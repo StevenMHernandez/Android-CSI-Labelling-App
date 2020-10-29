@@ -39,10 +39,12 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
     private ConstraintLayout background;
     private TextView textView;
     private TextView frameRateTextView;
+    private TextView repetitionsTextView;
 
     BaseDataCollectorService dataCollectorService = new FileDataCollectorService();
 
     int actionIndex = 0;
+    int actionsRepetitions = 0;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
@@ -53,6 +55,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
         background = findViewById(R.id.background);
         textView = findViewById(R.id.textView);
         frameRateTextView = findViewById(R.id.frameRateTextView);
+        repetitionsTextView = findViewById(R.id.repetitionsTextView);
 
         PressAndHoldMainActivity activity = this;
 
@@ -60,7 +63,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
 
         dataCollectorService.handle("type,smartphone_id,timestamp,current_action\n");
 
-        textView.setText("Press once the following state is occuring: " + actions[actionIndex]);
+        textView.setText("Press once the following state is occurring: " + actions[actionIndex]);
 
         background.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
@@ -73,9 +76,13 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
                 case MotionEvent.ACTION_UP:
                     activity.dataCollectorService.handle(updateCsiString(activity, "no action"));
                     actionIndex = (actionIndex + 1) % actions.length;
-                    textView.setText("Press once the following state is occuring: " + actions[actionIndex]);
+                    textView.setText("Press once the following state is occurring: " + actions[actionIndex]);
                     textView.setTextColor(Color.BLACK);
                     background.setBackgroundColor(Color.WHITE);
+                    if (actionIndex == 0) {
+                        actionsRepetitions++;
+                    }
+                    repetitionsTextView.setText("Total Reps: " + Integer.toString(actionsRepetitions) + " + "  + Integer.toString(actionIndex) + "/" + Integer.toString(actions.length));
                     break;
 
             }

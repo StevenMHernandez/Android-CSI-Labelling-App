@@ -43,9 +43,11 @@ public class TimerMainActivity extends AppCompatActivity implements CSIDataInter
     private ConstraintLayout background;
     Timer timer;
     private TextView frameRateTextView;
+    private TextView repetitionsTextView;
 
     BaseDataCollectorService dataCollectorService = new FileDataCollectorService();
     int actionIndex = 0;
+    int actionsRepetitions = 0;
     boolean inTransition = true;
 
     @Override
@@ -56,6 +58,7 @@ public class TimerMainActivity extends AppCompatActivity implements CSIDataInter
         textView = findViewById(R.id.textView);
         background = findViewById(R.id.background);
         frameRateTextView = findViewById(R.id.frameRateTextView);
+        repetitionsTextView = findViewById(R.id.repetitionsTextView);
 
         dataCollectorService.setup(this);
 
@@ -68,17 +71,23 @@ public class TimerMainActivity extends AppCompatActivity implements CSIDataInter
             @Override
             public void run() {
                 String currentAction;
-                    inTransition = false;
-                    currentAction = actions[actionIndex];
-                    activity.runOnUiThread(() -> {
-                        textView.setText(currentAction);
-                        textView.setTextColor(Color.BLACK);
-                        background.setBackgroundColor(Color.WHITE);
-                    });
-                    actionIndex = (actionIndex + 1) % actions.length;
+                inTransition = false;
+                currentAction = actions[actionIndex];
+                activity.runOnUiThread(() -> {
+                    textView.setText(currentAction);
+                    textView.setTextColor(Color.BLACK);
+                    background.setBackgroundColor(Color.WHITE);
+                    repetitionsTextView.setText("Total Reps: " + Integer.toString(actionsRepetitions) + " + " + Integer.toString(actionIndex) + "/" + Integer.toString(actions.length));
+                });
 
                 // currentAction
                 activity.dataCollectorService.handle(updateCsiString(activity, currentAction));
+
+                // Setup for the next iteration
+                actionIndex = (actionIndex + 1) % actions.length;
+                if (actionIndex == 0) {
+                    actionsRepetitions++;
+                }
             }
         }, 0, (long) (timer_pause_seconds * 1000));
 
