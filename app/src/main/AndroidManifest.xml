@@ -18,6 +18,7 @@
         <activity android:name=".Experiments.TimerMainActivity">
 <!--        <activity android:name=".Experiments.PressAndHoldMainActivity">-->
 <!--        <activity android:name=".Experiments.ToggleMainActivity">-->
+<!--        <activity android:name=".Experiments.ManualInputMainActivity">-->
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

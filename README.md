@@ -16,6 +16,7 @@ To facilitate training such a model with CSI data collected from the [ESP32 CSI 
 * Timer (Action changes every _t_ seconds)
 * Press and Hold (Action is only recorded when the user presses a button on screen)
 * Toggle (Action switches to the next state after each press-and-release)
+* Manual Input (Manually type the current action into the text-input box)
 
 ## Usage
 
@@ -31,6 +32,7 @@ For example the below sample would select the "PressAndHold" labelling method:
 <!-- <activity android:name=".Experiments.TimerMainActivity"> -->
 <activity android:name=".Experiments.PressAndHoldMainActivity">
 <!-- <activity android:name=".Experiments.ToggleMainActivity"> -->
+<!-- <activity android:name=".Experiments.ManualInputMainActivity"> -->
 ```
 
 ### Set Labelling Parameters
