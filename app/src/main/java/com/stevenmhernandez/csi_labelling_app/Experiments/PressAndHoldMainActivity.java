@@ -38,6 +38,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
 
     private ConstraintLayout background;
     private TextView textView;
+    private TextView textViewTimeSinceLast;
     private TextView frameRateTextView;
     private TextView repetitionsTextView;
 
@@ -45,6 +46,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
 
     int actionIndex = 0;
     int actionsRepetitions = 0;
+    long previousTime = 0;
 
     @SuppressLint({"ClickableViewAccessibility", "SetTextI18n"})
     @Override
@@ -54,6 +56,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
 
         background = findViewById(R.id.background);
         textView = findViewById(R.id.textView);
+        textViewTimeSinceLast = findViewById(R.id.textViewTimeSinceLast);
         frameRateTextView = findViewById(R.id.frameRateTextView);
         repetitionsTextView = findViewById(R.id.repetitionsTextView);
 
@@ -72,6 +75,7 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
                     textView.setText("Release after complete");
                     textView.setTextColor(Color.WHITE);
                     background.setBackgroundColor(Color.BLACK);
+                    previousTime = System.currentTimeMillis();
                     break;
                 case MotionEvent.ACTION_UP:
                     activity.dataCollectorService.handle(updateCsiString(activity, "no action"));
@@ -83,12 +87,36 @@ public class PressAndHoldMainActivity extends AppCompatActivity implements CSIDa
                         actionsRepetitions++;
                     }
                     repetitionsTextView.setText("Total Reps: " + Integer.toString(actionsRepetitions) + " + "  + Integer.toString(actionIndex) + "/" + Integer.toString(actions.length));
+                    previousTime = System.currentTimeMillis();
                     break;
 
             }
 
             return true;
         });
+
+        previousTime = System.currentTimeMillis();
+
+        Thread t = new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (!isInterrupted()) {
+                        Thread.sleep(100);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                long millis = System.currentTimeMillis();
+                                textViewTimeSinceLast.setText(Integer.toString((int) ((millis - previousTime) / 1000.0)) + " Seconds");
+                            }
+                        });
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        t.start();
 
 
         csiSerial.setup(this, "example_experiment_name");
